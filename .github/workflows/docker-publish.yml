@@ -1,0 +1,79 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+env:
+  IMAGE_NAME: rolebot
+  REGISTRY: ghcr.io
+  DOCKERDEPLOY_HOST_USER: ${{secrets.DOCKERDEPLOY_HOST_USER }}
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+      - 
+        name: Calculate Publishing Variables
+        run: |
+          # docker.pkg.github.com/
+          IMAGE_ID=${{ github.repository }}
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          VERSION=0.1.${{github.run_number}}
+
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "CURRENT_ID=ghcr.io/$IMAGE_ID" >> $GITHUB_ENV
+
+          echo "IMAGE_ID=$IMAGE_ID"
+          echo "VERSION=$VERSION"
+
+          echo ${#DOCKERDEPLOY_HOST_USER}
+          echo -n "$DOCKERDEPLOY_HOST_USER" | wc -c
+          echo -n "${{env.DOCKERDEPLOY_HOST_USER }}" | wc -c
+          echo -n "${{secrets.DOCKERDEPLOY_HOST_USER }}" | wc -c
+      - 
+        name: Build Bot
+        run: docker build -t ${{ env.IMAGE_NAME }} .
+      - 
+        name: Echoing the publishing Variables
+        run: |
+          echo IMAGE_ID="${{env.IMAGE_ID}}"
+          echo VERSION="${{env.VERSION}}"
+      - 
+        name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - 
+        name: Push ${{ env.IMAGE_NAME }} image
+        run: |
+          CURRENT_ID=ghcr.io/$IMAGE_ID
+          docker tag ${{ env.IMAGE_NAME }} $CURRENT_ID:$VERSION
+          docker tag ${{ env.IMAGE_NAME }} $CURRENT_ID:latest
+
+          docker push $CURRENT_ID:$VERSION
+          docker push $CURRENT_ID:latest
+      - 
+        name: Deploy to Server via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          HOST: ${{ secrets.DOCKERDEPLOY_HOST }}
+          USERNAME: ${{ secrets.DOCKERDEPLOY_HOST_USER }}
+          port: ${{ secrets.DOCKERDEPLOY_HOST_PORT }}
+          KEY: ${{ secrets.DOCKERDEPLOY_PK }}
+          envs: ${{ env.CURRENT_ID }}
+          script_stop: true
+          script: |
+            cd /root/dockerbots/${{ env.IMAGE_NAME }}
+            echo "${{secrets.PUBLISH_TOKEN}}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker stop $(docker ps -q -f "name=${{ env.IMAGE_NAME }}") || echo "No container to stop"
+            docker container rm -f ${{ env.IMAGE_NAME }} || echo "No container to rm"
+            docker pull "${{ env.CURRENT_ID }}:latest"
+            docker run -d --name=${{ env.IMAGE_NAME }} --env Discord__BotToken=${{ secrets.BOT_TOKEN }} --env Database__Cluster=${{ secrets.DB_CLUSTER }} --env Database__User=${{ secrets.DB_USER }} --env Database__Password=${{ secrets.DB_PASSWORD }} --env Database__Name=${{ secrets.DB_NAME }} --env FortniteApi__ApiKey=${{ secrets.FORTNITE_API_KEY }} --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 --restart=unless-stopped ${{ env.CURRENT_ID }}:latest
+            exit
