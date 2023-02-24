@@ -14,6 +14,7 @@ using Serilog;
 using System.Reflection;
 using RoleBot.BusinessLayer;
 using RoleBot.DataLayer;
+using RoleBot.Helpers;
 
 var builder = new HostBuilder();
 
@@ -65,8 +66,11 @@ builder.ConfigureServices((host, services) =>
     services.AddSingleton(databaseSettings);
     services.AddSingleton(versionSettings);
 
-    services.AddScoped<IRoleBusinessLayer, RoleBusinessLayer>();
+    services.AddScoped<RoleHelper>();
     services.AddScoped<IRoleDataLayer, RoleDataLayer>();
+    services.AddScoped<IRoleBusinessLayer, RoleBusinessLayer>();
+    services.AddScoped<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
+    services.AddScoped<IConfigurationDataLayer, ConfigurationDataLayer>();
     services.AddScoped<IDiscordFormatter, DiscordFormatter>();
 
     services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
