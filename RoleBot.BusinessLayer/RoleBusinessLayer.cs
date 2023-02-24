@@ -21,5 +21,10 @@ namespace RoleBot.BusinessLayer
         {
             await _roleDataLayer.SaveRole(guildId, roleId);
         }
+
+        public async Task DeleteRole(ulong guildId, ulong roleId)
+        {
+            await _roleDataLayer.DeleteRole(guildId, roleId);
+        }
     }
 }
