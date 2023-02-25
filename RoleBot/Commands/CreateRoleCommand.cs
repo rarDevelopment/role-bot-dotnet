@@ -8,16 +8,19 @@ namespace RoleBot.Commands;
 public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IRoleBusinessLayer _roleBusinessLayer;
+    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
     private readonly RoleHelper _roleHelper;
     private readonly IDiscordFormatter _discordFormatter;
     private readonly ILogger<DiscordBot> _logger;
 
     public CreateRoleCommand(IRoleBusinessLayer roleBusinessLayer,
+        IConfigurationBusinessLayer configurationBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
     {
         _roleBusinessLayer = roleBusinessLayer;
+        _configurationBusinessLayer = configurationBusinessLayer;
         _roleHelper = roleHelper;
         _discordFormatter = discordFormatter;
         _logger = logger;
@@ -85,7 +88,8 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
 
                 if (createChannelForRole)
                 {
-                    if (requestingUser.GuildPermissions.ManageChannels)
+                    if (requestingUser.GuildPermissions.ManageChannels
+                        || await _configurationBusinessLayer.HasApprovedRole(Context.Guild.Id, Context.Guild.Name, requestingUser.RoleIds))
                     {
                         var channelName = ToKebabCase(roleName);
 

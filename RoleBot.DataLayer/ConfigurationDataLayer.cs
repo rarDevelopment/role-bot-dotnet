@@ -31,21 +31,30 @@ namespace RoleBot.DataLayer
             return guildConfig.ToDomain();
         }
 
-        public async Task<bool> AddAllowedRoleId(ulong guildId, ulong roleId)
+        public async Task<bool> AddAllowedRoleId(ulong guildId, string guildName, ulong roleId)
         {
+            var existingConfig = await GetConfigurationForGuild(guildId, guildName);
             var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
-            var existingConfig = await _configurationCollection.Find(filter).FirstOrDefaultAsync();
-            if (existingConfig == null)
-            {
-                throw new GuildConfigurationNotFoundException(guildId);
-            }
             var updatedAllowedRoleIds = existingConfig.AllowedRoleIds;
-            updatedAllowedRoleIds.Add(roleId.ToString());
-            var update = Builders<ConfigurationEntity>.Update.Set(config => config.AllowedRoleIds, updatedAllowedRoleIds);
+            updatedAllowedRoleIds.Add(roleId);
+            var updatedAllowedRoleIdStrings = updatedAllowedRoleIds.Select(r => r.ToString()); //TODO: remove this when changing to numbers
+            var update = Builders<ConfigurationEntity>.Update.Set(config => config.AllowedRoleIds, updatedAllowedRoleIdStrings);
             var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
             return updateResult.MatchedCount == 1;
         }
-        
+
+        public async Task<bool> RemoveAllowedRoleId(ulong guildId, string guildName, ulong roleId)
+        {
+            var existingConfig = await GetConfigurationForGuild(guildId, guildName);
+            var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+            var updatedAllowedRoleIds = existingConfig.AllowedRoleIds;
+            updatedAllowedRoleIds.Remove(roleId);
+            var updatedAllowedRoleIdStrings = updatedAllowedRoleIds.Select(r => r.ToString()); //TODO: remove this when changing to numbers
+            var update = Builders<ConfigurationEntity>.Update.Set(config => config.AllowedRoleIds, updatedAllowedRoleIdStrings);
+            var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
+            return updateResult.MatchedCount == 1;
+        }
+
         private async Task InitGuildConfiguration(ulong guildId, string guildName)
         {
             await _configurationCollection.InsertOneAsync(new ConfigurationEntity

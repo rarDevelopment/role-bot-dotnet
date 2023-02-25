@@ -21,5 +21,14 @@ namespace RoleBot.BusinessLayer
             var config = await GetConfiguration(guildId, guildName);
             return config.AllowedRoleIds.Any(roleIds.Contains);
         }
+
+        public async Task<bool> SetApprovedRole(ulong guildId, string guildName, ulong roleId, bool setAllowed)
+        {
+            if (setAllowed)
+            {
+                return await _configurationDataLayer.AddAllowedRoleId(guildId, guildName, roleId);
+            }
+            return await _configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
+        }
     }
 }
