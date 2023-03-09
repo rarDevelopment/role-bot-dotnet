@@ -4,13 +4,13 @@ using RoleBot.Helpers;
 
 namespace RoleBot.Commands;
 
-public class ManageRoleCommand : InteractionModuleBase<SocketInteractionContext>
+public class SetUpExistingRoleCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IRoleBusinessLayer _roleBusinessLayer;
     private readonly RoleHelper _roleHelper;
     private readonly IDiscordFormatter _discordFormatter;
 
-    public ManageRoleCommand(IRoleBusinessLayer roleBusinessLayer,
+    public SetUpExistingRoleCommand(IRoleBusinessLayer roleBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter)
     {
@@ -19,9 +19,9 @@ public class ManageRoleCommand : InteractionModuleBase<SocketInteractionContext>
         _discordFormatter = discordFormatter;
     }
 
-    [SlashCommand("manage-role", "Link or unlink a role so that the bot can manage it.")]
-    public async Task ManageRoleSlashCommand(
-        [Summary("role", "The name of the role to manage")] IRole role,
+    [SlashCommand("set-existing-role", "Allow or disallow the bot to manage an existing role.")]
+    public async Task SetUpExistingRoleSlashCommand(
+        [Summary("role", "The role to allow or disallow")] IRole role,
         [Summary("set-manageable", "Whether or not the role should be manageable by the bot")] bool setManageable
         )
     {
