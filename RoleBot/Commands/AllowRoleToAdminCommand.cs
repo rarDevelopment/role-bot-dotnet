@@ -4,13 +4,13 @@ using RoleBot.Helpers;
 
 namespace RoleBot.Commands;
 
-public class AllowRoleToManageCommand : InteractionModuleBase<SocketInteractionContext>
+public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
     private readonly RoleHelper _roleHelper;
     private readonly IDiscordFormatter _discordFormatter;
 
-    public AllowRoleToManageCommand(IConfigurationBusinessLayer configurationBusinessLayer,
+    public AllowRoleToAdminCommand(IConfigurationBusinessLayer configurationBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter)
     {
@@ -19,8 +19,8 @@ public class AllowRoleToManageCommand : InteractionModuleBase<SocketInteractionC
         _discordFormatter = discordFormatter;
     }
 
-    [SlashCommand("allow-roles", "Set whether or not the specified role can use the bot to create roles and channels.")]
-    public async Task AllowRoleToManageSlashCommand(
+    [SlashCommand("allow-role-to-admin", "Set whether or not the specified role can use the bot to create roles and channels.")]
+    public async Task AllowRoleToAdminSlashCommand(
         [Summary("role", "The name of the role to manage")] IRole roleToSet,
         [Summary("set-allowed", "Whether or not the role should be allowed to use the bot to create roles and related channels")] bool setAllowed
         )
