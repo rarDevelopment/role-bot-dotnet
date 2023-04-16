@@ -43,7 +43,7 @@ jobs:
         name: Build Bot
         run: docker build -t ${{ env.IMAGE_NAME }} .
       - 
-        name: Echoing the publishing Variables
+        name: Echoing the publishing variables
         run: |
           echo IMAGE_ID="${{env.IMAGE_ID}}"
           echo VERSION="${{env.VERSION}}"
