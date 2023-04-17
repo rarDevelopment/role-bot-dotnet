@@ -75,5 +75,5 @@ jobs:
             docker stop $(docker ps -q -f "name=${{ env.IMAGE_NAME }}") || echo "No container to stop"
             docker container rm -f ${{ env.IMAGE_NAME }} || echo "No container to rm"
             docker pull "${{ env.CURRENT_ID }}:latest"
-            docker run -d --name=${{ env.IMAGE_NAME }} --env Discord__BotToken=${{ secrets.BOT_TOKEN }} --env Database__Cluster=${{ secrets.DB_CLUSTER }} --env Database__User=${{ secrets.DB_USER }} --env Database__Password=${{ secrets.DB_PASSWORD }} --env Database__Name=${{ secrets.DB_NAME }} --env FortniteApi__ApiKey=${{ secrets.FORTNITE_API_KEY }} --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 --restart=unless-stopped ${{ env.CURRENT_ID }}:latest
+            docker run -d --name=${{ env.IMAGE_NAME }} --env Discord__BotToken=${{ secrets.BOT_TOKEN }} --env Database__Cluster=${{ secrets.DB_CLUSTER }} --env Database__User=${{ secrets.DB_USER }} --env Database__Password=${{ secrets.DB_PASSWORD }} --env Database__Name=${{ secrets.DB_NAME }} --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 --restart=unless-stopped ${{ env.CURRENT_ID }}:latest
             exit
