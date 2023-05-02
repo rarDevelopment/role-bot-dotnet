@@ -70,7 +70,6 @@ jobs:
           envs: ${{ env.CURRENT_ID }}
           script_stop: true
           script: |
-            cd /root/dockerbots/${{ env.IMAGE_NAME }}
             echo "${{secrets.PUBLISH_TOKEN}}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker stop $(docker ps -q -f "name=${{ env.IMAGE_NAME }}") || echo "No container to stop"
             docker container rm -f ${{ env.IMAGE_NAME }} || echo "No container to rm"
