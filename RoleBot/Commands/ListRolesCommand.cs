@@ -63,14 +63,18 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
         var rolesYouHaveField = new EmbedFieldBuilder
         {
             Name = "YOUR ROLES",
-            Value = string.Join(", ", rolesYouHave),
+            Value = rolesYouHave.Any()
+                ? string.Join(", ", rolesYouHave.Select(r => r.Mention))
+                : "_You have none of the roles that this bot can manage._",
             IsInline = false
         };
 
         var rolesAvailableField = new EmbedFieldBuilder
         {
             Name = "AVAILABLE ROLES",
-            Value = string.Join(", ", rolesAvailable),
+            Value = rolesAvailable.Any()
+                ? string.Join(", ", rolesAvailable.Select(r => r.Mention))
+                : "_There are no roles remaining (that this bot can manage) that you do not already have._",
             IsInline = false
         };
 
