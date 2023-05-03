@@ -54,7 +54,7 @@ public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext
         }
 
         var members = Context.Guild.Users.Where(u => u.Roles.Contains(roleToCheck));
-        var membersToDisplay = members.OrderBy(m => m.Username).Select(m => m.Mention);
+        var membersToDisplay = members.OrderBy(m => m.Username.ToLower()).Select(m => m.Mention);
 
         var embedBuilder = _discordFormatter.BuildRegularEmbed($"Users with Role: {roleToCheck.Name}",
             $"{string.Join("\n", membersToDisplay)}",
