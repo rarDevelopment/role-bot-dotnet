@@ -4,13 +4,13 @@ using RoleBot.Helpers;
 
 namespace RoleBot.Commands;
 
-public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
+public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IRoleBusinessLayer _roleBusinessLayer;
     private readonly RoleHelper _roleHelper;
     private readonly IDiscordFormatter _discordFormatter;
 
-    public ListRolesCommand(IRoleBusinessLayer roleBusinessLayer,
+    public WhoHasRolesCommand(IRoleBusinessLayer roleBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter)
     {
@@ -19,8 +19,8 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
         _discordFormatter = discordFormatter;
     }
 
-    [SlashCommand("list-roles", "List your roles and the available roles")]
-    public async Task ListRolesSlashCommand()
+    [SlashCommand("who-has-role", "List the users who have the specified role")]
+    public async Task WhoHasSlashCommand([Summary("Role", "The role to check (non-mentionable roles cannot be checked)")] IRole roleToCheck)
     {
         await DeferAsync();
 
@@ -44,43 +44,21 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        var validRoles = _roleHelper.GetValidRoles(Context.Guild, guildRoles);
-        var rolesYouHave = new List<IRole>();
-        var rolesAvailable = new List<IRole>();
-
-        foreach (var role in validRoles)
+        if (!await _roleHelper.IsValidRole(roleToCheck, Context.Guild))
         {
-            if (requestingUser.RoleIds.Contains(role.Id))
-            {
-                rolesYouHave.Add(role);
-            }
-            else
-            {
-                rolesAvailable.Add(role);
-            }
+            await FollowupAsync(embed:
+                _discordFormatter.BuildErrorEmbed("Invalid Role",
+                    "Sorry, this is not a valid role for this bot to check. Use /list-roles to see which roles the bot can manage.",
+                    requestingUser));
+            return;
         }
 
-        var rolesYouHaveField = new EmbedFieldBuilder
-        {
-            Name = "YOUR ROLES",
-            Value = string.Join(", ", rolesYouHave),
-            IsInline = false
-        };
+        var members = Context.Guild.Users.Where(u => u.Roles.Contains(roleToCheck));
+        var membersToDisplay = members.Select(m => m.Mention).OrderBy(m => m);
 
-        var rolesAvailableField = new EmbedFieldBuilder
-        {
-            Name = "AVAILABLE ROLES",
-            Value = string.Join(", ", rolesAvailable),
-            IsInline = false
-        };
-
-        var embedBuilder = _discordFormatter.BuildRegularEmbed("Roles List",
-            "",
-            Context.User,
-            new List<EmbedFieldBuilder>
-        {
-            rolesYouHaveField, rolesAvailableField
-        });
+        var embedBuilder = _discordFormatter.BuildRegularEmbed($"Users with Role: {roleToCheck.Name}",
+            $"{string.Join("\n", membersToDisplay)}",
+            Context.User);
         await FollowupAsync(embed: embedBuilder);
     }
 }

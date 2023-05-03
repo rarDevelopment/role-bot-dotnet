@@ -69,6 +69,12 @@ Allow or disallow the bot to manage an existing role.
 
 ---
 
+`/who-has-role`
+
+List the users who have the specified role. Note: currently, roles that are set to not be mentionable cannot be used with this command.
+
+---
+
 `/version`
 
 Get the current version number of the bot.
