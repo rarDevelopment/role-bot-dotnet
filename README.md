@@ -6,7 +6,7 @@ Now written in C# and .NET 7.
 
 [Invite Role Bot to your Discord Server](https://discord.com/api/oauth2/authorize?client_id=740381594669285466&permissions=139855349840&scope=bot%20applications.commands)
 
-[Discord Support Server](https://discord.gg/7MEKqVNEdM)
+[Discord Support Server](https://discord.gg/Za4NAtJJ9v)
 
 ![role-bot-20%](https://user-images.githubusercontent.com/4060573/223889561-d4988dcd-9659-4c11-9d2b-d2883087a681.png)
 
