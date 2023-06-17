@@ -146,9 +146,9 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    private string ToTitleCase(string text)
+    private static string ToTitleCase(string text)
     {
-        var regex = new Regex("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
+        var regex = new Regex("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", RegexOptions.IgnoreCase);
 
         var fixedTextPieces = text
             .ToLower()
@@ -165,7 +165,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         return string.Join(" ", fixedTextPieces);
     }
 
-    private string ToKebabCase(string text)
+    private static string ToKebabCase(string text)
     {
         return text.ToLower().Replace(" ", "-");
     }
