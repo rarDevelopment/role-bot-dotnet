@@ -32,9 +32,10 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
     public async Task CreateRoleSlashCommand(
         [Summary("role", "The name of the role to add")] string roleName,
         [Summary("mentionable", "Whether or not the role should be mentionable by others")] bool isMentionable,
+        [Summary("color", "Color hex code for the role")] string? colorHexCode = null,
+        [Summary("display_separately", "Whether or not to display this role separately in the members list")] bool isHoisted = false,
         [Summary("create_channel", "Creates a private channel associated with the new role")] bool createChannelForRole = false,
-        [Summary("channel_category", "Category for the created channel")] ICategoryChannel? categoryChannel = null,
-        [Summary("color", "Color hex code for the role")] string? colorHexCode = null
+        [Summary("channel_category", "Category for the created channel")] ICategoryChannel? categoryChannel = null
         )
     {
         await DeferAsync();
@@ -98,7 +99,10 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                     roleColor = new Discord.Color(color.Value.R, color.Value.G, color.Value.B);
                 }
 
-                var createdRole = await Context.Guild.CreateRoleAsync(fixedRoleName, GuildPermissions.None, roleColor, false,
+                var createdRole = await Context.Guild.CreateRoleAsync(fixedRoleName,
+                    GuildPermissions.None,
+                    roleColor,
+                    isHoisted,
                     isMentionable);
                 await _roleBusinessLayer.SaveRole(Context.Guild.Id, createdRole.Id);
 
