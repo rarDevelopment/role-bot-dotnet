@@ -1,8 +1,7 @@
-﻿namespace RoleBot.Models
+﻿namespace RoleBot.Models;
+
+public class GuildRole
 {
-    public class GuildRole
-    {
-        public ulong GuildId { get; set; }
-        public ulong RoleId { get; set; }
-    }
+    public ulong GuildId { get; set; }
+    public ulong RoleId { get; set; }
 }

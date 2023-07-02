@@ -1,7 +1,6 @@
-﻿namespace RoleBot
+﻿namespace RoleBot;
+
+public class DiscordSettings
 {
-    public class DiscordSettings
-    {
-        public string? BotToken { get; set; }
-    }
+    public string? BotToken { get; set; }
 }
