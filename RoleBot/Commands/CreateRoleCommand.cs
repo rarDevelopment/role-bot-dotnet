@@ -1,7 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
 using DiscordDotNetUtilities.Interfaces;
 using RoleBot.BusinessLayer;
 using RoleBot.Helpers;
+using Color = System.Drawing.Color;
 
 namespace RoleBot.Commands;
 
@@ -30,8 +32,9 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
     public async Task CreateRoleSlashCommand(
         [Summary("role", "The name of the role to add")] string roleName,
         [Summary("mentionable", "Whether or not the role should be mentionable by others")] bool isMentionable,
-        [Summary("create_channel", "Creates a private role")] bool createChannelForRole = false,
-        [Summary("channel_category", "Category for the created channel")] ICategoryChannel? categoryChannel = null
+        [Summary("create_channel", "Creates a private channel associated with the new role")] bool createChannelForRole = false,
+        [Summary("channel_category", "Category for the created channel")] ICategoryChannel? categoryChannel = null,
+        [Summary("color", "Color hex code for the role")] string? colorHexCode = null
         )
     {
         await DeferAsync();
@@ -46,16 +49,30 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         }
 
         var allRoles = Context.Guild.Roles;
-        var alreadyExists = allRoles.Any(r => string.Equals(r.Name.Replace(" ", ""), roleName.Replace(" ", ""),
+        var existingRole = allRoles.FirstOrDefault(r => string.Equals(r.Name.Replace(" ", ""), roleName.Replace(" ", ""),
             StringComparison.InvariantCultureIgnoreCase));
 
-        if (alreadyExists)
+        if (existingRole != null)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Role Name Already Exists",
-                    "Sorry, that role name is taken.",
+                _discordFormatter.BuildErrorEmbed("Role With That Name Already Exists",
+                    $"Sorry, the role {existingRole.Mention} already exists.",
                     Context.User));
             return;
+        }
+
+        Color? color = null;
+        if (!string.IsNullOrEmpty(colorHexCode))
+        {
+            color = GetColorFromHexCode(colorHexCode);
+            if (color == null)
+            {
+                await FollowupAsync(embed:
+                _discordFormatter.BuildErrorEmbed("Invalid Color Specified",
+                    $"Sorry, the hex code {colorHexCode} is not a valid hex color.",
+                    Context.User));
+                return;
+            }
         }
 
         var fixedRoleName = ToTitleCase(roleName);
@@ -75,7 +92,13 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
             }
             else
             {
-                var createdRole = await Context.Guild.CreateRoleAsync(fixedRoleName, GuildPermissions.None, null, false,
+                Discord.Color? roleColor = null;
+                if (color != null)
+                {
+                    roleColor = new Discord.Color(color.Value.R, color.Value.G, color.Value.B);
+                }
+
+                var createdRole = await Context.Guild.CreateRoleAsync(fixedRoleName, GuildPermissions.None, roleColor, false,
                     isMentionable);
                 await _roleBusinessLayer.SaveRole(Context.Guild.Id, createdRole.Id);
 
@@ -144,6 +167,22 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                     "Sorry, there was an error creating that role.",
                     Context.User));
         }
+    }
+
+    private static Color? GetColorFromHexCode(string colorHexCode)
+    {
+        if (!colorHexCode.StartsWith("#"))
+        {
+            colorHexCode = $"#{colorHexCode}";
+        }
+
+        var colorConverter = new ColorConverter();
+        if (!colorConverter.IsValid(colorHexCode))
+        {
+            return null;
+        }
+        var color = (Color?)colorConverter.ConvertFromString(colorHexCode);
+        return color;
     }
 
     private static string ToTitleCase(string text)
