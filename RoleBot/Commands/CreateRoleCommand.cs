@@ -141,7 +141,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                         embedFields.Add(new EmbedFieldBuilder
                         {
                             Name = "Channel Created",
-                            Value = $"{createdChannel.Mention} created.\nUse /add-role to add the role to access this channel.",
+                            Value = $"`#{createdChannel.Name}`\nUse `/add-role` to add the role to access this channel.",
                             IsInline = false
                         });
                     }
