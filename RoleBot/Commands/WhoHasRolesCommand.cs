@@ -27,7 +27,7 @@ public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -38,7 +38,7 @@ public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext
         if (!guildRoles.Any())
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("No Roles",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("No Roles",
                     "There are no roles configured with this bot.",
                     Context.User));
             return;
@@ -47,7 +47,7 @@ public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext
         if (!await _roleHelper.IsValidRole(roleToCheck, Context.Guild))
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Role",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Role",
                     "Sorry, this is not a valid role for this bot to check. Use /list-roles to see which roles the bot can manage.",
                     requestingUser));
             return;
@@ -56,7 +56,7 @@ public class WhoHasRolesCommand : InteractionModuleBase<SocketInteractionContext
         var members = Context.Guild.Users.Where(u => u.Roles.Contains(roleToCheck));
         var membersToDisplay = members.OrderBy(m => m.Username.ToLower()).Select(m => m.Mention);
 
-        var embedBuilder = _discordFormatter.BuildRegularEmbed($"Users with Role: {roleToCheck.Name}",
+        var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter($"Users with Role: {roleToCheck.Name}",
             $"{string.Join("\n", membersToDisplay)}",
             Context.User);
         await FollowupAsync(embed: embedBuilder);

@@ -25,7 +25,7 @@ public class RemoveRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -34,7 +34,7 @@ public class RemoveRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (!await _roleHelper.IsValidRole(roleToRemove, Context.Guild))
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Role",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Role",
                     "Sorry, this is not a valid role for this bot to remove.",
                     requestingUser));
             return;
@@ -43,7 +43,7 @@ public class RemoveRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (otherUser != null && !await _roleHelper.CanAdministrate(Context.Guild, requestingUser))
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Insufficient Permissions",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",
                     "Sorry, you do not have the required permissions to remove roles from other users.",
                     requestingUser));
             return;
@@ -55,7 +55,7 @@ public class RemoveRoleCommand : InteractionModuleBase<SocketInteractionContext>
         var messageToSend = roleWasRemoved
             ? $"Removed role {roleToRemove.Mention} for {userToRemove.Mention}"
             : $"Role was **NOT** removed - {userToRemove.Mention} does not have the role {roleToRemove.Mention}";
-        var embedBuilder = _discordFormatter.BuildRegularEmbed("Removed Role", messageToSend, Context.User);
+        var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Removed Role", messageToSend, Context.User);
         await FollowupAsync(embed: embedBuilder);
     }
 

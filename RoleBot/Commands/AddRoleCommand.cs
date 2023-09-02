@@ -25,7 +25,7 @@ public class AddRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -34,7 +34,7 @@ public class AddRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (!await _roleHelper.IsValidRole(roleToAdd, Context.Guild))
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Role",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Role",
                     "Sorry, this is not a valid role for this bot to add.",
                     requestingUser));
             return;
@@ -45,7 +45,7 @@ public class AddRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (otherUser != null && !await canAdministrate)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Insufficient Permissions",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",
                     "Sorry, you do not have the required permissions to assign roles to other users.",
                     requestingUser));
             return;
@@ -57,7 +57,7 @@ public class AddRoleCommand : InteractionModuleBase<SocketInteractionContext>
         var messageToSend = roleWasAdded
             ? $"Added role {roleToAdd.Mention} for {userToAdd.Mention}"
             : $"Role was **NOT** added - {userToAdd.Mention} already has the role {roleToAdd.Mention}";
-        var embedBuilder = _discordFormatter.BuildRegularEmbed("Added Role", messageToSend, Context.User);
+        var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Added Role", messageToSend, Context.User);
         await FollowupAsync(embed: embedBuilder);
     }
 

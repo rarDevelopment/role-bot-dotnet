@@ -30,7 +30,7 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -39,7 +39,7 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
         if (!await _roleHelper.CanAdministrate(Context.Guild, requestingUser))
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Insufficient Permissions",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",
                     "Sorry, you do not have permission to manage the bot.",
                     Context.User));
             return;
@@ -54,7 +54,7 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
             if (isRoleAllowed)
             {
                 await FollowupAsync(embed:
-                    _discordFormatter.BuildErrorEmbed("Role Already Allowed",
+                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Already Allowed",
                         "Sorry, this role is already allowed to manage the bot.",
                         Context.User));
                 return;
@@ -66,7 +66,7 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
             if (!isRoleAllowed)
             {
                 await FollowupAsync(embed:
-                    _discordFormatter.BuildErrorEmbed("Role Is Already Not Allowed",
+                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Is Already Not Allowed",
                         "Sorry, this role is not allowed to manage the bot so there's nothing to change.",
                         Context.User));
                 return;
@@ -74,7 +74,7 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
             await _configurationBusinessLayer.SetApprovedRole(Context.Guild.Id, Context.Guild.Name, roleToSet.Id, false);
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Configuring Bot Permissions",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Configuring Bot Permissions",
             $"The role {roleToSet.Mention} can now {(setAllowed ? "" : "no longer")} manage the bot.",
             Context.User));
     }

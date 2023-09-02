@@ -43,7 +43,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -56,7 +56,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (existingRole != null)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Role With That Name Already Exists",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Role With That Name Already Exists",
                     $"Sorry, the role {existingRole.Mention} already exists.",
                     Context.User));
             return;
@@ -69,7 +69,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
             if (color == null)
             {
                 await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Color Specified",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Color Specified",
                     $"Sorry, the hex code {colorHexCode} is not a valid hex color.",
                     Context.User));
                 return;
@@ -157,7 +157,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                 }
             }
 
-            var embedBuilder = _discordFormatter.BuildRegularEmbed("Creating a Role",
+            var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Creating a Role",
                 "",
                 Context.User,
                 embedFields);
@@ -167,7 +167,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogError("Error creating role: {0}", ex.Message);
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Error Creating Role",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Error Creating Role",
                     "Sorry, there was an error creating that role.",
                     Context.User));
         }
