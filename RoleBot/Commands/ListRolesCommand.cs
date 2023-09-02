@@ -27,7 +27,7 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("Invalid Action",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -38,7 +38,7 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
         if (!guildRoles.Any())
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbed("No Roles",
+                _discordFormatter.BuildErrorEmbedWithUserFooter("No Roles",
                     "There are no roles configured with this bot.",
                     Context.User));
             return;
@@ -78,7 +78,7 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
             IsInline = false
         };
 
-        var embedBuilder = _discordFormatter.BuildRegularEmbed("Roles List",
+        var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Roles List",
             "",
             Context.User,
             new List<EmbedFieldBuilder>
