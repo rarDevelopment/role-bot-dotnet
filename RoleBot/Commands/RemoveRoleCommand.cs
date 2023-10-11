@@ -40,7 +40,7 @@ public class RemoveRoleCommand : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        if (otherUser != null && !await _roleHelper.CanAdministrate(Context.Guild, requestingUser))
+        if (otherUser != null && otherUser.Id != requestingUser.Id && !await _roleHelper.CanAdministrate(Context.Guild, requestingUser))
         {
             await FollowupAsync(embed:
                 _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",

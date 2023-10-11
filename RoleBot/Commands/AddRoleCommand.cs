@@ -42,7 +42,7 @@ public class AddRoleCommand : InteractionModuleBase<SocketInteractionContext>
 
         var canAdministrate = _roleHelper.CanAdministrate(Context.Guild, requestingUser);
 
-        if (otherUser != null && !await canAdministrate)
+        if (otherUser != null && otherUser.Id != requestingUser.Id && !await canAdministrate)
         {
             await FollowupAsync(embed:
                 _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",
