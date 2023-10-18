@@ -75,7 +75,8 @@ public class AllowRoleToAdminCommand : InteractionModuleBase<SocketInteractionCo
         }
 
         await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Configuring Bot Permissions",
-            $"The role {roleToSet.Mention} can now {(setAllowed ? "" : "no longer")} manage the bot.",
+            $"Updated Role: {roleToSet.Mention}\n" +
+            $"Can This Role Manage The Bot: **{(setAllowed ? "Yes" : "No")}**",
             Context.User));
     }
 }

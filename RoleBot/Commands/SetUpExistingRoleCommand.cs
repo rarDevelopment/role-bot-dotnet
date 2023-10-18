@@ -19,10 +19,10 @@ public class SetUpExistingRoleCommand : InteractionModuleBase<SocketInteractionC
         _discordFormatter = discordFormatter;
     }
 
-    [SlashCommand("set-existing-role", "Allow or disallow the bot to manage an existing role.")]
+    [SlashCommand("set-existing-role", "Allow or disallow the bot to control an existing role.")]
     public async Task SetUpExistingRoleSlashCommand(
         [Summary("role", "The role to allow or disallow")] IRole role,
-        [Summary("set-manageable", "Whether or not the role should be manageable by the bot")] bool setManageable
+        [Summary("controllable", "Whether or not the role should be controllable by the bot")] bool setControllable
         )
     {
         await DeferAsync();
@@ -40,20 +40,20 @@ public class SetUpExistingRoleCommand : InteractionModuleBase<SocketInteractionC
         {
             await FollowupAsync(embed:
                 _discordFormatter.BuildErrorEmbedWithUserFooter("Insufficient Permissions",
-                    "Sorry, you do not have permission to manage roles with the bot.",
+                    "Sorry, you do not have permission to control roles with the bot.",
                     Context.User));
             return;
         }
 
         var validRoles = await _roleBusinessLayer.GetGuildRoles(Context.Guild.Id);
-        var isRoleManageable = validRoles.Any(r => r.RoleId == role.Id);
-        if (setManageable)
+        var isRoleControllable = validRoles.Any(r => r.RoleId == role.Id);
+        if (setControllable)
         {
-            if (isRoleManageable)
+            if (isRoleControllable)
             {
                 await FollowupAsync(embed:
-                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Already Manageable",
-                        "Sorry, this role is already manageable by the bot.",
+                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Already Controllable",
+                        "Sorry, this role is already controllable by the bot.",
                         Context.User));
                 return;
             }
@@ -62,19 +62,20 @@ public class SetUpExistingRoleCommand : InteractionModuleBase<SocketInteractionC
         }
         else
         {
-            if (!isRoleManageable)
+            if (!isRoleControllable)
             {
                 await FollowupAsync(embed:
-                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Is Not Manageable",
-                        "Sorry, this role is not manageable by the bot so there's nothing to change.",
+                    _discordFormatter.BuildErrorEmbedWithUserFooter("Role Is Not Controllable",
+                        "Sorry, this role is not controllable by the bot so there's nothing to change.",
                         Context.User));
                 return;
             }
             await _roleBusinessLayer.DeleteRole(Context.Guild.Id, role.Id);
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Configuring a Role",
-            $"The role {role.Mention} can now {(setManageable ? "" : "no longer")} be managed by the bot.",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Role Updated",
+            $"Updated Role: **{role.Name}**\n" +
+            $"Can The Bot Control This Role: **{(setControllable ? "Yes" : "No")}**",
             Context.User));
     }
 }
