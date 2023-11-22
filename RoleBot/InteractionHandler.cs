@@ -2,35 +2,24 @@ using System.Reflection;
 
 namespace RoleBot;
 
-public class InteractionHandler
+public class InteractionHandler(DiscordSocketClient client, InteractionService handler, IServiceProvider services, ILogger<InteractionHandler> logger)
 {
-    private readonly DiscordSocketClient _client;
-    private readonly InteractionService _handler;
-    private readonly IServiceProvider _services;
-    private readonly ILogger _logger;
-
-    public InteractionHandler(DiscordSocketClient client, InteractionService handler, IServiceProvider services, ILogger<InteractionHandler> logger)
-    {
-        _client = client;
-        _handler = handler;
-        _services = services;
-        _logger = logger;
-    }
+    private readonly ILogger _logger = logger;
 
     public async Task InitializeAsync()
     {
-        await _handler.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        await handler.AddModulesAsync(Assembly.GetEntryAssembly(), services);
 
-        _client.InteractionCreated += HandleInteraction;
+        client.InteractionCreated += HandleInteraction;
     }
 
     private async Task HandleInteraction(SocketInteraction interaction)
     {
         try
         {
-            var context = new SocketInteractionContext(_client, interaction);
+            var context = new SocketInteractionContext(client, interaction);
 
-            var result = await _handler.ExecuteCommandAsync(context, _services);
+            var result = await handler.ExecuteCommandAsync(context, services);
 
             if (!result.IsSuccess)
                 switch (result.Error)
