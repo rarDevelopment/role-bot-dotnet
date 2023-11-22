@@ -7,27 +7,13 @@ using Color = System.Drawing.Color;
 
 namespace RoleBot.Commands;
 
-public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IRoleBusinessLayer _roleBusinessLayer;
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly RoleHelper _roleHelper;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public CreateRoleCommand(IRoleBusinessLayer roleBusinessLayer,
+public class CreateRoleCommand(IRoleBusinessLayer roleBusinessLayer,
         IConfigurationBusinessLayer configurationBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _roleBusinessLayer = roleBusinessLayer;
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _roleHelper = roleHelper;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("create-role", "Create a role.")]
     public async Task CreateRoleSlashCommand(
         [Summary("role", "The name of the role to add")] string roleName,
@@ -43,7 +29,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
+                discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
@@ -56,7 +42,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         if (existingRole != null)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("Role With That Name Already Exists",
+                discordFormatter.BuildErrorEmbedWithUserFooter("Role With That Name Already Exists",
                     $"Sorry, the role {existingRole.Mention} already exists.",
                     Context.User));
             return;
@@ -69,7 +55,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
             if (color == null)
             {
                 await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Color Specified",
+                discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Color Specified",
                     $"Sorry, the hex code {colorHexCode} is not a valid hex color.",
                     Context.User));
                 return;
@@ -82,7 +68,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         {
             var embedFields = new List<EmbedFieldBuilder>();
 
-            if (!await _roleHelper.CanAdministrate(Context.Guild, requestingUser))
+            if (!await roleHelper.CanAdministrate(Context.Guild, requestingUser))
             {
                 embedFields.Add(new EmbedFieldBuilder
                 {
@@ -104,7 +90,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                     roleColor,
                     isHoisted,
                     isMentionable);
-                await _roleBusinessLayer.SaveRole(Context.Guild.Id, createdRole.Id);
+                await roleBusinessLayer.SaveRole(Context.Guild.Id, createdRole.Id);
 
                 embedFields.Add(new EmbedFieldBuilder
                 {
@@ -116,7 +102,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                 if (createChannelForRole)
                 {
                     if (requestingUser.GuildPermissions.ManageChannels
-                        || await _configurationBusinessLayer.HasApprovedRole(Context.Guild.Id, Context.Guild.Name, requestingUser.RoleIds))
+                        || await configurationBusinessLayer.HasApprovedRole(Context.Guild.Id, Context.Guild.Name, requestingUser.RoleIds))
                     {
                         var channelName = ToKebabCase(roleName);
 
@@ -157,7 +143,7 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
                 }
             }
 
-            var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Creating a Role",
+            var embedBuilder = discordFormatter.BuildRegularEmbedWithUserFooter("Creating a Role",
                 "",
                 Context.User,
                 embedFields);
@@ -165,9 +151,9 @@ public class CreateRoleCommand : InteractionModuleBase<SocketInteractionContext>
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error creating role: {0}", ex.Message);
+            logger.LogError("Error creating role: {0}", ex.Message);
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("Error Creating Role",
+                discordFormatter.BuildErrorEmbedWithUserFooter("Error Creating Role",
                     "Sorry, there was an error creating that role.",
                     Context.User));
         }

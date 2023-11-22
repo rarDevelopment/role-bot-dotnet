@@ -1,6 +1,3 @@
 ﻿namespace RoleBot.Models.Exceptions;
 
-public class GuildConfigurationNotFoundException : Exception
-{
-    public GuildConfigurationNotFoundException(ulong guildId) : base($"Guild configuration not found for guild with id {guildId}") { }
-}
+public class GuildConfigurationNotFoundException(ulong guildId) : Exception($"Guild configuration not found for guild with id {guildId}");

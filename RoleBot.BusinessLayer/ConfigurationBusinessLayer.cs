@@ -3,17 +3,11 @@ using RoleBot.Models;
 
 namespace RoleBot.BusinessLayer;
 
-public class ConfigurationBusinessLayer : IConfigurationBusinessLayer
+public class ConfigurationBusinessLayer(IConfigurationDataLayer configurationDataLayer) : IConfigurationBusinessLayer
 {
-    private readonly IConfigurationDataLayer _configurationDataLayer;
-    public ConfigurationBusinessLayer(IConfigurationDataLayer configurationDataLayer)
-    {
-        _configurationDataLayer = configurationDataLayer;
-    }
-
     public async Task<Configuration> GetConfiguration(ulong guildId, string guildName)
     {
-        return await _configurationDataLayer.GetConfigurationForGuild(guildId, guildName);
+        return await configurationDataLayer.GetConfigurationForGuild(guildId, guildName);
     }
 
     public async Task<bool> HasApprovedRole(ulong guildId, string guildName, IReadOnlyCollection<ulong> roleIds)
@@ -26,8 +20,8 @@ public class ConfigurationBusinessLayer : IConfigurationBusinessLayer
     {
         if (setAllowed)
         {
-            return await _configurationDataLayer.AddAllowedRoleId(guildId, guildName, roleId);
+            return await configurationDataLayer.AddAllowedRoleId(guildId, guildName, roleId);
         }
-        return await _configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
+        return await configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
     }
 }

@@ -4,21 +4,11 @@ using RoleBot.Helpers;
 
 namespace RoleBot.Commands;
 
-public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IRoleBusinessLayer _roleBusinessLayer;
-    private readonly RoleHelper _roleHelper;
-    private readonly IDiscordFormatter _discordFormatter;
-
-    public ListRolesCommand(IRoleBusinessLayer roleBusinessLayer,
+public class ListRolesCommand(IRoleBusinessLayer roleBusinessLayer,
         RoleHelper roleHelper,
         IDiscordFormatter discordFormatter)
-    {
-        _roleBusinessLayer = roleBusinessLayer;
-        _roleHelper = roleHelper;
-        _discordFormatter = discordFormatter;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("list-roles", "List your roles and the available roles")]
     public async Task ListRolesSlashCommand()
     {
@@ -27,24 +17,24 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
         if (Context.User is not IGuildUser requestingUser)
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
+                discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Action",
                     "Sorry, you need to be a valid user in a valid server to use this bot.",
                     Context.User));
             return;
         }
 
-        var guildRoles = await _roleBusinessLayer.GetGuildRoles(Context.Guild.Id);
+        var guildRoles = await roleBusinessLayer.GetGuildRoles(Context.Guild.Id);
 
         if (!guildRoles.Any())
         {
             await FollowupAsync(embed:
-                _discordFormatter.BuildErrorEmbedWithUserFooter("No Roles",
+                discordFormatter.BuildErrorEmbedWithUserFooter("No Roles",
                     "There are no roles configured with this bot.",
                     Context.User));
             return;
         }
 
-        var validRoles = _roleHelper.GetValidRoles(Context.Guild, guildRoles);
+        var validRoles = roleHelper.GetValidRoles(Context.Guild, guildRoles);
         var rolesYouHave = new List<IRole>();
         var rolesAvailable = new List<IRole>();
 
@@ -78,7 +68,7 @@ public class ListRolesCommand : InteractionModuleBase<SocketInteractionContext>
             IsInline = false
         };
 
-        var embedBuilder = _discordFormatter.BuildRegularEmbedWithUserFooter("Roles List",
+        var embedBuilder = discordFormatter.BuildRegularEmbedWithUserFooter("Roles List",
             "",
             Context.User,
             new List<EmbedFieldBuilder>
