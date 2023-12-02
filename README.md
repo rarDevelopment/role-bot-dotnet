@@ -2,7 +2,7 @@
 
 A Discord Bot for easily creating roles and letting users manage those roles.
 
-Now written in C# and .NET 7.
+Now written in C# and .NET 8.
 
 [Invite RoleBot to your Discord Server](https://discord.com/api/oauth2/authorize?client_id=740381594669285466&permissions=139855349840&scope=bot%20applications.commands)
 
