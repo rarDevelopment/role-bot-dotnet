@@ -1,15 +1,16 @@
-name: Docker
+﻿name: Docker
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 env:
   IMAGE_NAME: rolebot
   REGISTRY: ghcr.io
   DOCKERDEPLOY_HOST_USER: ${{secrets.DOCKERDEPLOY_HOST_USER }}
 jobs:
   build_and_push:
+    name: "🚀 Build, Push, and Deploy"
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
@@ -74,3 +75,28 @@ jobs:
             docker pull "${{ env.CURRENT_ID }}:latest"
             docker run -d --name=${{ env.IMAGE_NAME }} --env Discord__BotToken=${{ secrets.BOT_TOKEN }} --env Database__Cluster=${{ secrets.DB_CLUSTER }} --env Database__User=${{ secrets.DB_USER }} --env Database__Password=${{ secrets.DB_PASSWORD }} --env Database__Name=${{ secrets.DB_NAME }} --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 --restart=unless-stopped ${{ env.CURRENT_ID }}:latest
             exit
+  create_tag_and_release:
+    name: "🏷️ Create Tag and Release"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: build_and_push
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read VersionNumber from appsettings.json
+        id: get_version
+        run: |
+          APP_VERSION=$(jq -r '.Version.VersionNumber' RoleBot/appsettings.json)
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+      - name: Create Tag
+        id: create_tag
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git tag -a "v${{ env.APP_VERSION }}" -m "Release version ${{ env.APP_VERSION }}"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v${{ env.APP_VERSION }}"
+      - name: Create Release
+        run: |
+          gh release create "${{ env.APP_VERSION }}" --generate-notes --title "${{ env.APP_VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
