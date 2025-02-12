@@ -87,16 +87,9 @@ jobs:
         run: |
           APP_VERSION=$(jq -r '.Version.VersionNumber' RoleBot/appsettings.json)
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
-      - name: Create Tag
-        id: create_tag
-        run: |
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-          git tag -a "v${{ env.APP_VERSION }}" -m "Release version ${{ env.APP_VERSION }}"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v${{ env.APP_VERSION }}"
       - name: Create Release
         run: |
-          gh release create "${{ env.APP_VERSION }}" --generate-notes --title "${{ env.APP_VERSION }}"
+          gh release create "${{ env.APP_VERSION }}" --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
