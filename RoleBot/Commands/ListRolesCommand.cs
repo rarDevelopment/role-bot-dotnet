@@ -23,7 +23,7 @@ public class ListRolesCommand(IRoleBusinessLayer roleBusinessLayer,
             return;
         }
 
-        var guildRoles = await roleBusinessLayer.GetGuildRoles(Context.Guild.Id);
+        var guildRoles = await roleBusinessLayer.GetGuildRoles(Context.Guild.Id.ToString());
 
         if (!guildRoles.Any())
         {

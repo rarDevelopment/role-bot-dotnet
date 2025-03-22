@@ -10,7 +10,7 @@ public class UserJoinedNotificationHandler(IConfigurationBusinessLayer configura
     {
         _ = Task.Run(async () =>
         {
-            var configuration = await configurationBusinessLayer.GetConfiguration(notification.UserWhoJoined.Guild.Id,
+            var configuration = await configurationBusinessLayer.GetConfiguration(notification.UserWhoJoined.Guild.Id.ToString(),
                 notification.UserWhoJoined.Guild.Name);
 
             if (configuration.NewUserRole is null or 0)

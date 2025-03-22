@@ -35,7 +35,7 @@ public class SetUpExistingRoleCommand(IRoleBusinessLayer roleBusinessLayer,
             return;
         }
 
-        var validRoles = await roleBusinessLayer.GetGuildRoles(Context.Guild.Id);
+        var validRoles = await roleBusinessLayer.GetGuildRoles(Context.Guild.Id.ToString());
         var isRoleControllable = validRoles.Any(r => r.RoleId == role.Id);
         if (setControllable)
         {
@@ -48,7 +48,7 @@ public class SetUpExistingRoleCommand(IRoleBusinessLayer roleBusinessLayer,
                 return;
             }
 
-            await roleBusinessLayer.SaveRole(Context.Guild.Id, role.Id);
+            await roleBusinessLayer.SaveRole(Context.Guild.Id.ToString(), role.Id);
         }
         else
         {
@@ -60,7 +60,7 @@ public class SetUpExistingRoleCommand(IRoleBusinessLayer roleBusinessLayer,
                         Context.User));
                 return;
             }
-            await roleBusinessLayer.DeleteRole(Context.Guild.Id, role.Id);
+            await roleBusinessLayer.DeleteRole(Context.Guild.Id.ToString(), role.Id);
         }
 
         await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Role Updated",

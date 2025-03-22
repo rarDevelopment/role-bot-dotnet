@@ -90,7 +90,7 @@ public class CreateRoleCommand(IRoleBusinessLayer roleBusinessLayer,
                     roleColor,
                     isHoisted,
                     isMentionable);
-                await roleBusinessLayer.SaveRole(Context.Guild.Id, createdRole.Id);
+                await roleBusinessLayer.SaveRole(Context.Guild.Id.ToString(), createdRole.Id);
 
                 embedFields.Add(new EmbedFieldBuilder
                 {
@@ -102,7 +102,7 @@ public class CreateRoleCommand(IRoleBusinessLayer roleBusinessLayer,
                 if (createChannelForRole)
                 {
                     if (requestingUser.GuildPermissions.ManageChannels
-                        || await configurationBusinessLayer.HasApprovedRole(Context.Guild.Id, Context.Guild.Name, requestingUser.RoleIds))
+                        || await configurationBusinessLayer.HasApprovedRole(Context.Guild.Id.ToString(), Context.Guild.Name, requestingUser.RoleIds))
                     {
                         var channelName = ToKebabCase(roleName);
 

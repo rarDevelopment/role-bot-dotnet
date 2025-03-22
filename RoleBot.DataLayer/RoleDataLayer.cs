@@ -17,22 +17,22 @@ public class RoleDataLayer : IRoleDataLayer
         _roleCollection = database.GetCollection<GuildRoleEntity>("role");
     }
 
-    public async Task<IReadOnlyCollection<GuildRole>> GetRolesForGuild(ulong guildId)
+    public async Task<IReadOnlyCollection<GuildRole>> GetRolesForGuild(string guildId)
     {
-        var filter = Builders<GuildRoleEntity>.Filter.Eq("guildId", guildId.ToString());
+        var filter = Builders<GuildRoleEntity>.Filter.Eq("guildId", guildId);
 
         var guildRoles = await _roleCollection.Find(filter).ToListAsync();
         return guildRoles.Select(x => x.ToDomain()).ToList();
     }
 
-    public async Task<GuildRole?> GetRole(ulong guildId, ulong roleId)
+    public async Task<GuildRole?> GetRole(string guildId, ulong roleId)
     {
         var filter = new BsonDocument
         {
             {
                 "guildId", new BsonDocument
                 {
-                    {"$eq", guildId.ToString()}
+                    {"$eq", guildId}
                 }
             },
             {
@@ -47,7 +47,7 @@ public class RoleDataLayer : IRoleDataLayer
         return guildRole?.ToDomain();
     }
 
-    public async Task SaveRole(ulong guildId, ulong roleId)
+    public async Task SaveRole(string guildId, ulong roleId)
     {
         var existingRole = await GetRole(guildId, roleId);
         if (existingRole != null)
@@ -55,7 +55,7 @@ public class RoleDataLayer : IRoleDataLayer
             return;
         }
 
-        await _roleCollection.InsertOneAsync(new GuildRoleEntity { GuildId = guildId.ToString(), RoleId = roleId.ToString() });
+        await _roleCollection.InsertOneAsync(new GuildRoleEntity { GuildId = guildId, RoleId = roleId.ToString() });
 
         var insertedRole = await GetRole(guildId, roleId);
         if (insertedRole == null)
@@ -64,14 +64,14 @@ public class RoleDataLayer : IRoleDataLayer
         }
     }
 
-    public async Task DeleteRole(ulong guildId, ulong roleId)
+    public async Task DeleteRole(string guildId, ulong roleId)
     {
         var filter = new BsonDocument
         {
             {
                 "guildId", new BsonDocument
                 {
-                    {"$eq", guildId.ToString()}
+                    {"$eq", guildId}
                 }
             },
             {

@@ -5,18 +5,18 @@ namespace RoleBot.BusinessLayer;
 
 public class ConfigurationBusinessLayer(IConfigurationDataLayer configurationDataLayer) : IConfigurationBusinessLayer
 {
-    public async Task<Configuration> GetConfiguration(ulong guildId, string guildName)
+    public async Task<Configuration> GetConfiguration(string guildId, string guildName)
     {
         return await configurationDataLayer.GetConfigurationForGuild(guildId, guildName);
     }
 
-    public async Task<bool> HasApprovedRole(ulong guildId, string guildName, IReadOnlyCollection<ulong> roleIds)
+    public async Task<bool> HasApprovedRole(string guildId, string guildName, IReadOnlyCollection<ulong> roleIds)
     {
         var config = await GetConfiguration(guildId, guildName);
         return config.AllowedRoleIds.Any(roleIds.Contains);
     }
 
-    public async Task<bool> SetApprovedRole(ulong guildId, string guildName, ulong roleId, bool setAllowed)
+    public async Task<bool> SetApprovedRole(string guildId, string guildName, ulong roleId, bool setAllowed)
     {
         if (setAllowed)
         {
@@ -25,7 +25,7 @@ public class ConfigurationBusinessLayer(IConfigurationDataLayer configurationDat
         return await configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
     }
 
-    public async Task<bool> SetNewUserRole(ulong guildId, string guildName, ulong? roleId)
+    public async Task<bool> SetNewUserRole(string guildId, string guildName, ulong? roleId)
     {
         return await configurationDataLayer.SetNewUserRole(guildId, guildName, roleId);
     }

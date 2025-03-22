@@ -52,6 +52,7 @@ public class DiscordBot(DiscordSocketClient client,
     {
         client.MessageReceived += msg => Publish(new MessageReceivedNotification(msg));
         client.UserJoined += user => Publish(new UserJoinedNotification(user));
+        client.JoinedGuild += socketGuild => Publish(new JoinedGuildNotification(socketGuild));
     }
 
     private Task Publish<TEvent>(TEvent @event) where TEvent : INotification

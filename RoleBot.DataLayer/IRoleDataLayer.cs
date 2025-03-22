@@ -4,8 +4,8 @@ namespace RoleBot.DataLayer;
 
 public interface IRoleDataLayer
 {
-    Task<IReadOnlyCollection<GuildRole>> GetRolesForGuild(ulong guildId);
-    Task<GuildRole?> GetRole(ulong guildId, ulong roleId);
-    Task SaveRole(ulong guildId, ulong roleId);
-    Task DeleteRole(ulong guildId, ulong roleId);
+    Task<IReadOnlyCollection<GuildRole>> GetRolesForGuild(string guildId);
+    Task<GuildRole?> GetRole(string guildId, ulong roleId);
+    Task SaveRole(string guildId, ulong roleId);
+    Task DeleteRole(string guildId, ulong roleId);
 }
