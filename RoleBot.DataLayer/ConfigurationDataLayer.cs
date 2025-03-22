@@ -15,9 +15,9 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         _configurationCollection = database.GetCollection<ConfigurationEntity>("configuration");
     }
 
-    public async Task<Configuration> GetConfigurationForGuild(ulong guildId, string guildName)
+    public async Task<Configuration> GetConfigurationForGuild(string guildId, string guildName)
     {
-        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
         var guildConfig = await _configurationCollection.Find(filter).FirstOrDefaultAsync();
         if (guildConfig != null)
         {
@@ -30,10 +30,10 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         return guildConfig.ToDomain();
     }
 
-    public async Task<bool> AddAllowedRoleId(ulong guildId, string guildName, ulong roleId)
+    public async Task<bool> AddAllowedRoleId(string guildId, string guildName, ulong roleId)
     {
         var existingConfig = await GetConfigurationForGuild(guildId, guildName);
-        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
         var updatedAllowedRoleIds = existingConfig.AllowedRoleIds;
         updatedAllowedRoleIds.Add(roleId);
         var updatedAllowedRoleIdStrings = updatedAllowedRoleIds.Select(r => r.ToString()); //TODO: remove this when changing to numbers
@@ -42,10 +42,10 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         return updateResult.MatchedCount == 1;
     }
 
-    public async Task<bool> RemoveAllowedRoleId(ulong guildId, string guildName, ulong roleId)
+    public async Task<bool> RemoveAllowedRoleId(string guildId, string guildName, ulong roleId)
     {
         var existingConfig = await GetConfigurationForGuild(guildId, guildName);
-        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
         var updatedAllowedRoleIds = existingConfig.AllowedRoleIds;
         updatedAllowedRoleIds.Remove(roleId);
         var updatedAllowedRoleIdStrings = updatedAllowedRoleIds.Select(r => r.ToString()); //TODO: remove this when changing to numbers
@@ -54,15 +54,15 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         return updateResult.MatchedCount == 1;
     }
 
-    public async Task<bool> SetNewUserRole(ulong guildId, string guildName, ulong? roleId)
+    public async Task<bool> SetNewUserRole(string guildId, string guildName, ulong? roleId)
     {
-        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
         var update = Builders<ConfigurationEntity>.Update.Set(config => config.NewUserRole, roleId?.ToString() ?? null);
         var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
         return updateResult.ModifiedCount == 1 || updateResult.MatchedCount == 1;
     }
 
-    private async Task InitGuildConfiguration(ulong guildId, string guildName)
+    private async Task InitGuildConfiguration(string guildId, string guildName)
     {
         await _configurationCollection.InsertOneAsync(new ConfigurationEntity
         {

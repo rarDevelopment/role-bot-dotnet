@@ -2,6 +2,6 @@
 
 public class GuildRole
 {
-    public ulong GuildId { get; set; }
+    public string GuildId { get; set; }
     public ulong RoleId { get; set; }
 }

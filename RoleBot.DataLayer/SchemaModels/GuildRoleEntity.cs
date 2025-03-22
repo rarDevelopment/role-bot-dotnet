@@ -21,7 +21,7 @@ public class GuildRoleEntity
     {
         return new GuildRole
         {
-            GuildId = Convert.ToUInt64(GuildId),
+            GuildId = GuildId,
             RoleId = Convert.ToUInt64(RoleId)
         };
     }

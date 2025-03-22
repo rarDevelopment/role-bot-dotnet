@@ -35,7 +35,7 @@ public class AllowRoleToAdminCommand(IConfigurationBusinessLayer configurationBu
             return;
         }
 
-        var config = await configurationBusinessLayer.GetConfiguration(Context.Guild.Id, Context.Guild.Name);
+        var config = await configurationBusinessLayer.GetConfiguration(Context.Guild.Id.ToString(), Context.Guild.Name);
         var guildRoles = Context.Guild.Roles.Where(r => config.AllowedRoleIds.Contains(r.Id));
         var isRoleAllowed = guildRoles.Contains(roleToSet);
 
@@ -49,7 +49,7 @@ public class AllowRoleToAdminCommand(IConfigurationBusinessLayer configurationBu
                         Context.User));
                 return;
             }
-            await configurationBusinessLayer.SetApprovedRole(Context.Guild.Id, Context.Guild.Name, roleToSet.Id, true);
+            await configurationBusinessLayer.SetApprovedRole(Context.Guild.Id.ToString(), Context.Guild.Name, roleToSet.Id, true);
         }
         else
         {
@@ -61,7 +61,7 @@ public class AllowRoleToAdminCommand(IConfigurationBusinessLayer configurationBu
                         Context.User));
                 return;
             }
-            await configurationBusinessLayer.SetApprovedRole(Context.Guild.Id, Context.Guild.Name, roleToSet.Id, false);
+            await configurationBusinessLayer.SetApprovedRole(Context.Guild.Id.ToString(), Context.Guild.Name, roleToSet.Id, false);
         }
 
         await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Configuring Bot Permissions",

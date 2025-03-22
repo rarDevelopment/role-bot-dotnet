@@ -33,7 +33,8 @@ public class SetUpNewUserRoleCommand(IConfigurationBusinessLayer configurationBu
             return;
         }
 
-        var didUpdate = await configurationBusinessLayer.SetNewUserRole(Context.Guild.Id, Context.Guild.Name, role?.Id);
+        await configurationBusinessLayer.GetConfiguration(Context.Guild.Id.ToString(), Context.Guild.Name);
+        var didUpdate = await configurationBusinessLayer.SetNewUserRole(Context.Guild.Id.ToString(), Context.Guild.Name, role?.Id);
 
         if (didUpdate)
         {

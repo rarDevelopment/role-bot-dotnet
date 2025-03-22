@@ -4,8 +4,8 @@ namespace RoleBot.BusinessLayer;
 
 public interface IConfigurationBusinessLayer
 {
-    Task<Configuration> GetConfiguration(ulong guildId, string guildName);
-    Task<bool> HasApprovedRole(ulong guildId, string guildName, IReadOnlyCollection<ulong> roleIds);
-    Task<bool> SetApprovedRole(ulong guildId, string guildName, ulong roleId, bool setAllowed);
-    Task<bool> SetNewUserRole(ulong guildId, string guildName, ulong? roleId);
+    Task<Configuration> GetConfiguration(string guildId, string guildName);
+    Task<bool> HasApprovedRole(string guildId, string guildName, IReadOnlyCollection<ulong> roleIds);
+    Task<bool> SetApprovedRole(string guildId, string guildName, ulong roleId, bool setAllowed);
+    Task<bool> SetNewUserRole(string guildId, string guildName, ulong? roleId);
 }

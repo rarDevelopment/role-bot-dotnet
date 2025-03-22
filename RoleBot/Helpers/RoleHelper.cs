@@ -9,11 +9,11 @@ public class RoleHelper(IRoleBusinessLayer roleBusinessLayer, IConfigurationBusi
     {
         return guildUser.GuildPermissions.Administrator
                || guildUser.GuildPermissions.ManageRoles
-               || await configurationBusinessLayer.HasApprovedRole(guild.Id, guild.Name, guildUser.RoleIds);
+               || await configurationBusinessLayer.HasApprovedRole(guild.Id.ToString(), guild.Name, guildUser.RoleIds);
     }
     public async Task<bool> IsValidRole(IRole role, IGuild guild)
     {
-        var validRoles = await roleBusinessLayer.GetGuildRoles(guild.Id);
+        var validRoles = await roleBusinessLayer.GetGuildRoles(guild.Id.ToString());
         return guild.Roles.Any(r => r == role) && validRoles.Any(r => r.RoleId == role.Id);
     }
     public IEnumerable<SocketRole> GetValidRoles(SocketGuild guild, IReadOnlyCollection<GuildRole> guildRoles)

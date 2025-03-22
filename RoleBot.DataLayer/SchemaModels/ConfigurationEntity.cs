@@ -12,7 +12,7 @@ public class ConfigurationEntity
     public string Id { get; set; }
 
     [BsonElement("guildId")]
-    public ulong GuildId { get; set; }
+    public string GuildId { get; set; }
 
     [BsonElement("guildName")]
     public string GuildName { get; set; }
