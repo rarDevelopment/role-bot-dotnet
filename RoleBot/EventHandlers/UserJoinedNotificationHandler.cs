@@ -13,7 +13,7 @@ public class UserJoinedNotificationHandler(IConfigurationBusinessLayer configura
             var configuration = await configurationBusinessLayer.GetConfiguration(notification.UserWhoJoined.Guild.Id,
                 notification.UserWhoJoined.Guild.Name);
 
-            if (configuration.NewUserRole == null)
+            if (configuration.NewUserRole is null or 0)
             {
                 return Task.CompletedTask;
             }
