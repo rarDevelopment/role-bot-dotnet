@@ -19,6 +19,8 @@ public class ConfigurationEntity
 
     [BsonElement("allowedRoleIds")]
     public List<string> AllowedRoleIds { get; set; }
+    [BsonElement("newUserRole")]
+    public string? NewUserRole { get; set; }
 
     public Configuration ToDomain()
     {
@@ -26,7 +28,8 @@ public class ConfigurationEntity
         {
             GuildId = GuildId,
             GuildName = GuildName,
-            AllowedRoleIds = AllowedRoleIds.Select(r => Convert.ToUInt64(r)).ToList()
+            AllowedRoleIds = AllowedRoleIds.Select(r => Convert.ToUInt64(r)).ToList(),
+            NewUserRole = Convert.ToUInt64(NewUserRole)
         };
     }
 }

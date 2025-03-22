@@ -24,4 +24,9 @@ public class ConfigurationBusinessLayer(IConfigurationDataLayer configurationDat
         }
         return await configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
     }
+
+    public async Task<bool> SetNewUserRole(ulong guildId, string guildName, ulong? roleId)
+    {
+        return await configurationDataLayer.SetNewUserRole(guildId, guildName, roleId);
+    }
 }

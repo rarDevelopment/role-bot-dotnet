@@ -1,7 +1,6 @@
 ﻿using MongoDB.Driver;
 using RoleBot.DataLayer.SchemaModels;
 using RoleBot.Models;
-using RoleBot.Models.Exceptions;
 
 namespace RoleBot.DataLayer;
 
@@ -55,13 +54,21 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         return updateResult.MatchedCount == 1;
     }
 
+    public async Task<bool> SetNewUserRole(ulong guildId, string guildName, ulong? roleId)
+    {
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+        var update = Builders<ConfigurationEntity>.Update.Set(config => config.NewUserRole, roleId?.ToString() ?? null);
+        var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
+        return updateResult.ModifiedCount == 1 || updateResult.MatchedCount == 1;
+    }
+
     private async Task InitGuildConfiguration(ulong guildId, string guildName)
     {
         await _configurationCollection.InsertOneAsync(new ConfigurationEntity
         {
             GuildId = guildId,
             GuildName = guildName,
-            AllowedRoleIds = new List<string>()
+            AllowedRoleIds = []
         });
     }
 }

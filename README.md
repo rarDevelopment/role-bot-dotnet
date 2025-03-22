@@ -69,6 +69,12 @@ Allow or disallow the bot to manage an existing role.
 
 ---
 
+`/set-new-user-role`
+
+Specify a role that new users will automatically be granted. This can be any role in your server. Leave the role parameter blank to unset this.
+
+---
+
 `/who-has-role`
 
 List the users who have the specified role. Note: currently, roles that are set to not be mentionable cannot be used with this command.
