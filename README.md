@@ -63,13 +63,13 @@ You can also remove a role from another user.*
 
 ---
 
-`/set-existing-role`
+`/set-existing-role`*
 
 Allow or disallow the bot to manage an existing role.
 
 ---
 
-`/set-new-user-role`
+`/set-new-user-role`*
 
 Specify a role that new users will automatically be granted. This can be any role in your server. Leave the role parameter blank to unset this.
 
