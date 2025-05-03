@@ -54,10 +54,18 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         return updateResult.MatchedCount == 1;
     }
 
-    public async Task<bool> SetNewUserRole(string guildId, string guildName, ulong? roleId)
+    public async Task<bool> SetNewUserRole(string guildId, ulong? roleId)
     {
         var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
         var update = Builders<ConfigurationEntity>.Update.Set(config => config.NewUserRole, roleId?.ToString() ?? null);
+        var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
+        return updateResult.ModifiedCount == 1 || updateResult.MatchedCount == 1;
+    }
+
+    public async Task<bool> SetEnableColorChoosing(string guildId, bool isEnabled)
+    {
+        var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId);
+        var update = Builders<ConfigurationEntity>.Update.Set(config => config.EnableColorChoosing, isEnabled);
         var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
         return updateResult.ModifiedCount == 1 || updateResult.MatchedCount == 1;
     }
@@ -68,7 +76,8 @@ public class ConfigurationDataLayer : IConfigurationDataLayer
         {
             GuildId = guildId,
             GuildName = guildName,
-            AllowedRoleIds = []
+            AllowedRoleIds = [],
+            EnableColorChoosing = false
         });
     }
 }

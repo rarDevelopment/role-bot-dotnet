@@ -20,7 +20,7 @@ var builder = new HostBuilder();
 
 builder.ConfigureAppConfiguration(options
     => options.AddJsonFile("appsettings.json")
-        .AddUserSecrets(Assembly.GetEntryAssembly(), true)
+        .AddUserSecrets(Assembly.GetEntryAssembly()!, true)
         .AddEnvironmentVariables())
     .ConfigureHostConfiguration(configHost =>
     {
@@ -69,6 +69,8 @@ builder.ConfigureServices((host, services) =>
     services.AddScoped<RoleHelper>();
     services.AddScoped<IRoleDataLayer, RoleDataLayer>();
     services.AddScoped<IRoleBusinessLayer, RoleBusinessLayer>();
+    services.AddScoped<IColorRoleDataLayer, ColorRoleDataLayer>();
+    services.AddScoped<IColorRoleBusinessLayer, ColorRoleBusinessLayer>();
     services.AddScoped<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
     services.AddScoped<IConfigurationDataLayer, ConfigurationDataLayer>();
     services.AddScoped<IDiscordFormatter, DiscordFormatter>();

@@ -60,7 +60,7 @@ public class RoleDataLayer : IRoleDataLayer
         var insertedRole = await GetRole(guildId, roleId);
         if (insertedRole == null)
         {
-            throw new InsertFailedException(guildId, roleId);
+            throw new InsertFailedException(guildId, roleId.ToString());
         }
     }
 
@@ -85,7 +85,7 @@ public class RoleDataLayer : IRoleDataLayer
         var result = await _roleCollection.DeleteOneAsync(filter);
         if (result.DeletedCount != 1)
         {
-            throw new DeleteFailedException(guildId, roleId);
+            throw new DeleteFailedException(guildId, roleId.ToString());
         }
     }
 }

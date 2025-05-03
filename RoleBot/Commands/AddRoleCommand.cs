@@ -52,13 +52,13 @@ public class AddRoleCommand(RoleHelper roleHelper, IDiscordFormatter discordForm
         await FollowupAsync(embed: embedBuilder);
     }
 
-    private static async Task<bool> AddRoleToUser(IRole roleToAdd, IGuildUser otherUser)
+    private static async Task<bool> AddRoleToUser(IRole roleToAdd, IGuildUser userToAdd)
     {
-        if (otherUser.RoleIds.Contains(roleToAdd.Id))
+        if (userToAdd.RoleIds.Contains(roleToAdd.Id))
         {
             return false;
         }
-        await otherUser.AddRoleAsync(roleToAdd);
+        await userToAdd.AddRoleAsync(roleToAdd);
         return true;
     }
 }
