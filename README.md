@@ -47,6 +47,16 @@ Create a role.
 
 ---
 
+`/choose-color`
+
+Choose a color. If the setting is enabled, any user can set their own color (and it will create a role for them in doing so). 
+
+If it is not enabled, only admins can use this command.*
+
+Regardless of it being enabled, admins can also set colors for other users using this command.*
+
+---
+
 `/list-roles`
 
 List your roles and the available roles (only includes roles that the bot can manage).
@@ -57,9 +67,13 @@ List your roles and the available roles (only includes roles that the bot can ma
 
 Remove a role from yourself or another user.
 
+You can also remove a role from another user.*
+
 ---
 
-You can also remove a role from another user.*
+`/set-color-choosing`*
+
+Set whether or not the the color choosing command is enabled for non-admins.*
 
 ---
 
@@ -77,7 +91,7 @@ Specify a role that new users will automatically be granted. This can be any rol
 
 `/who-has-role`
 
-List the users who have the specified role. Note: currently, roles that are set to not be mentionable cannot be used with this command.
+List the users who have the specified role. Note: currently, roles that are set to not be mentiolmanable cannot be used with this command.
 
 ---
 
