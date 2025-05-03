@@ -91,7 +91,7 @@ Specify a role that new users will automatically be granted. This can be any rol
 
 `/who-has-role`
 
-List the users who have the specified role. Note: currently, roles that are set to not be mentiolmanable cannot be used with this command.
+List the users who have the specified role. Note: currently, roles that are set to not be mentionable cannot be used with this command.
 
 ---
 
