@@ -159,7 +159,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
         }
         catch (Exception ex)
         {
-            logger.LogError("Error creating color role: {0}", ex.Message);
+            logger.LogError("Error creating color role: {0}", ex.ToString());
             await FollowupAsync(embed:
                 discordFormatter.BuildErrorEmbedWithUserFooter("Error Creating Color Role",
                     "Sorry, there was an error creating that role.",
