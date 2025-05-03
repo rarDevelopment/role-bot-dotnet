@@ -8,7 +8,7 @@ public class CheckColorCommand(IDiscordFormatter discordFormatter)
 {
     [SlashCommand("check-name-color", "See the hex code of your current name color.")]
     public async Task CheckColorSlashCommand(
-        [Summary("User", "The user for whom to add the role")] IGuildUser? otherUser = null
+        [Summary("User", "The user for whom to check the name color")] IGuildUser? otherUser = null
     )
     {
         await DeferAsync();
