@@ -25,8 +25,13 @@ public class ConfigurationBusinessLayer(IConfigurationDataLayer configurationDat
         return await configurationDataLayer.RemoveAllowedRoleId(guildId, guildName, roleId);
     }
 
-    public async Task<bool> SetNewUserRole(string guildId, string guildName, ulong? roleId)
+    public async Task<bool> SetNewUserRole(string guildId, ulong? roleId)
     {
-        return await configurationDataLayer.SetNewUserRole(guildId, guildName, roleId);
+        return await configurationDataLayer.SetNewUserRole(guildId, roleId);
+    }
+
+    public async Task<bool> SetEnableColorChoosing(string guildId, bool isEnabled)
+    {
+        return await configurationDataLayer.SetEnableColorChoosing(guildId, isEnabled);
     }
 }

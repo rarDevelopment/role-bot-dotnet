@@ -6,4 +6,5 @@ public class Configuration
     public string GuildName { get; set; }
     public List<ulong> AllowedRoleIds { get; set; }
     public ulong? NewUserRole { get; set; }
+    public bool EnableColorChoosing { get; set; }
 }
