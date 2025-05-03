@@ -96,7 +96,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
                 {
                     roleToAdd = await Context.Guild.GetRoleAsync(Convert.ToUInt64(existingColorRole.RoleId));
                 }
-                catch (Exception ex) when (ex is Discord.Net.HttpException && ex.Message.Contains("Unknown Role"))
+                catch (Discord.Net.HttpException ex) when (ex.Message.Contains("Unknown Role"))
                 {
                     roleToAdd = null;
                 }
