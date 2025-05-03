@@ -83,6 +83,14 @@ Allow or disallow the bot to manage an existing role.
 
 ---
 
+`/set-existing-role`
+
+Set an existing role as your designated color role, for the sake of choosing your color with the `/choose-color` command.
+You can specify a role, or leave it blank to automatically designate your highest role with a color as the color role.
+Only allowed if color choosing is enabled for non-admins.*
+
+---
+
 `/set-new-user-role`*
 
 Specify a role that new users will automatically be granted. This can be any role in your server. Leave the role parameter blank to unset this.
