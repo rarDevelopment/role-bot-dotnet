@@ -69,7 +69,7 @@ public class ChooseExistingColorRoleCommand(IColorRoleBusinessLayer colorRoleBus
                 .OrderByDescending(r => r.Position)
                 .ToList();
 
-            role ??= userRoles.FirstOrDefault(r => r.Color != DiscordColor.DarkBlue && !r.IsEveryone);
+            role ??= userRoles.FirstOrDefault(r => r.Color != DiscordColor.Default && !r.IsEveryone);
 
             if (role == null)
             {
