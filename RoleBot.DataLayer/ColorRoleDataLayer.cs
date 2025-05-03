@@ -70,7 +70,7 @@ public class ColorRoleDataLayer : IColorRoleDataLayer
         return true;
     }
 
-    public async Task DeleteColorRole(string guildId, string roleId, string userId)
+    public async Task DeleteColorRole(string guildId, string userId)
     {
         var filter = new BsonDocument
         {
@@ -78,12 +78,6 @@ public class ColorRoleDataLayer : IColorRoleDataLayer
                 "guildId", new BsonDocument
                 {
                     {"$eq", guildId}
-                }
-            },
-            {
-                "roleId", new BsonDocument
-                {
-                    {"$eq", roleId}
                 }
             },
             {
@@ -97,7 +91,7 @@ public class ColorRoleDataLayer : IColorRoleDataLayer
         var result = await _roleCollection.DeleteOneAsync(filter);
         if (result.DeletedCount != 1)
         {
-            throw new DeleteFailedException(guildId, roleId, userId);
+            throw new DeleteFailedException(guildId, "[filler for now]", userId);
         }
     }
 }

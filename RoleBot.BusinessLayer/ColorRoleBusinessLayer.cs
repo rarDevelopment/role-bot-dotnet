@@ -15,8 +15,8 @@ public class ColorRoleBusinessLayer(IColorRoleDataLayer colorRoleDataLayer) : IC
         await colorRoleDataLayer.SaveColorRole(guildId, roleId, userId);
     }
 
-    public async Task DeleteRole(string guildId, string roleId, string userId)
+    public async Task DeleteRole(string guildId, string userId)
     {
-        await colorRoleDataLayer.DeleteColorRole(guildId, roleId, userId);
+        await colorRoleDataLayer.DeleteColorRole(guildId, userId);
     }
 }

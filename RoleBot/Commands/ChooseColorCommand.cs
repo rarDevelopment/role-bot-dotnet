@@ -57,18 +57,9 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             return;
         }
 
-        if (string.IsNullOrEmpty(colorHexCode))
-        {
-            await FollowupAsync(embed:
-                discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Color Specified",
-                    "You need to specify a hex code color.",
-                    Context.User));
-            return;
-        }
+        var discordColor = GetColorFromHexCode(colorHexCode);
 
-        var color = GetColorFromHexCode(colorHexCode);
-
-        if (color == null)
+        if (discordColor == null)
         {
             await FollowupAsync(embed:
                 discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Color Specified",
@@ -79,8 +70,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
 
         try
         {
-            var roleColor = new DiscordColor(color.Value.R, color.Value.G, color.Value.B);
-
+            var roleColor = discordColor.Value;
             var userToAdd = otherUser ?? requestingUser;
             var userId = userToAdd.Id.ToString();
 
@@ -110,7 +100,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
                     {
                         await FollowupAsync(embed:
                             discordFormatter.BuildErrorEmbedWithUserFooter("Color NOT Set",
-                                $"The color {FixColorForHexCode(colorHexCode)} is already set for {userToAdd.Mention}.",
+                                $"The color {FixColorForHexCode(roleColor.ToString())} is already set for {userToAdd.Mention}.",
                                 Context.User));
                         return;
                     }
@@ -144,9 +134,9 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             var roleWasAdded = await AddRoleToUser(roleToAdd, userToAdd);
 
             var messageToSend = roleWasAdded
-                ? $"Added color role {roleToAdd.Mention} with color {FixColorForHexCode(colorHexCode)} for {userToAdd.Mention}"
-                : (existingColorWasModified ? $"Color for role {roleToAdd.Mention} was modified to {FixColorForHexCode(colorHexCode)}"
-                    : $"Color was **NOT** added - {userToAdd.Mention} already has the color role {roleToAdd.Mention} with color {FixColorForHexCode(colorHexCode)}");
+                ? $"Added color role {roleToAdd.Mention} with color {FixColorForHexCode(roleColor.ToString())} for {userToAdd.Mention}"
+                : (existingColorWasModified ? $"Color for role {roleToAdd.Mention} was modified to {FixColorForHexCode(roleColor.ToString())}"
+                    : $"Color was **NOT** added - {userToAdd.Mention} already has the color role {roleToAdd.Mention} with color {FixColorForHexCode(roleColor.ToString())}");
 
             var guildRoles = Context.Guild.Roles;
             var userRoles = guildRoles
@@ -155,13 +145,12 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             var addedRole = guildRoles.FirstOrDefault(r => r.Id == roleToAdd.Id);
 
             var rolesWithColorsAboveNewRole = userRoles
-                .Where(r => r.Color != DiscordColor.Default && r.Position > (addedRole?.Position ?? 0) && r.Position != 0)
+                .Where(r => r.Color != DiscordColor.Default && r.Position > (addedRole?.Position ?? 0) && !r.IsEveryone)
                 .ToList();
-
 
             if (rolesWithColorsAboveNewRole.Any())
             {
-                messageToSend += "\n**Note:** The following role(s) may override this new color due to priority order:\n";
+                messageToSend += "\n**Note:** The following role(s) may override this new color due to priority order (highest to lowest):\n";
                 foreach (var role in rolesWithColorsAboveNewRole)
                 {
                     messageToSend += $"{role.Mention}\n";
@@ -188,7 +177,6 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
         return roleToAdd;
     }
 
-
     private static async Task<bool> AddRoleToUser(IRole roleToAdd, IGuildUser userToAdd)
     {
         if (userToAdd.RoleIds.Contains(roleToAdd.Id))
@@ -198,8 +186,12 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
         await userToAdd.AddRoleAsync(roleToAdd);
         return true;
     }
-    private static Color? GetColorFromHexCode(string colorHexCode)
+    private static DiscordColor? GetColorFromHexCode(string? colorHexCode)
     {
+        if (colorHexCode == null)
+        {
+            return DiscordColor.Default;
+        }
         colorHexCode = FixColorForHexCode(colorHexCode);
 
         var colorConverter = new ColorConverter();
@@ -208,7 +200,12 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             return null;
         }
         var color = (Color?)colorConverter.ConvertFromString(colorHexCode);
-        return color;
+        if (color == null)
+        {
+            return null;
+        }
+        var discordColor = new DiscordColor(color.Value.R, color.Value.G, color.Value.B);
+        return discordColor;
     }
 
     private static string FixColorForHexCode(string colorHexCode)
