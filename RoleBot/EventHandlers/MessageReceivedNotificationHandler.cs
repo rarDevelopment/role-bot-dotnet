@@ -1,16 +1,16 @@
-﻿using MediatR;
+﻿using DiscordDotNetUtilities.Interfaces;
 using RoleBot.Notifications;
 
 namespace RoleBot.EventHandlers;
 
-public class MessageReceivedNotificationHandler : INotificationHandler<MessageReceivedNotification>
+public class MessageReceivedNotificationHandler : IEventHandler<MessageReceivedNotification>
 {
-    public Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
+    public Task HandleAsync(MessageReceivedNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
         {
             return Task.CompletedTask;
-        });
+        }, cancellationToken);
         return Task.CompletedTask;
     }
 }

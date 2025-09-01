@@ -5,7 +5,6 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 using DiscordDotNetUtilities;
 using DiscordDotNetUtilities.Interfaces;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RoleBot;
@@ -15,6 +14,8 @@ using System.Reflection;
 using RoleBot.BusinessLayer;
 using RoleBot.DataLayer;
 using RoleBot.Helpers;
+using RoleBot.EventHandlers;
+using RoleBot.Notifications;
 
 var builder = new HostBuilder();
 
@@ -79,7 +80,13 @@ builder.ConfigureServices((host, services) =>
 
     services.AddSingleton<InteractionHandler>();
 
-    services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DiscordBot).GetTypeInfo().Assembly));
+    // Register EventBus
+    services.AddScoped<IEventBus, EventBus>();
+
+    // Register Event Handlers
+    services.AddScoped<IEventHandler<MessageReceivedNotification>, MessageReceivedNotificationHandler>();
+    services.AddScoped<IEventHandler<UserJoinedNotification>, UserJoinedNotificationHandler>();
+    services.AddScoped<IEventHandler<JoinedGuildNotification>, JoinedGuildNotificationHandler>();
 
     services.AddHostedService<DiscordBot>();
 });

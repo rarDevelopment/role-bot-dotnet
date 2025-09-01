@@ -1,14 +1,15 @@
-﻿using MediatR;
-using RoleBot.BusinessLayer;
+﻿using RoleBot.BusinessLayer;
+using DiscordDotNetUtilities.Interfaces;
 using RoleBot.Notifications;
 
 namespace RoleBot.EventHandlers;
+
 public class JoinedGuildNotificationHandler(
     IConfigurationBusinessLayer configurationBusinessLayer,
     ILogger<DiscordBot> logger)
-    : INotificationHandler<JoinedGuildNotification>
+    : IEventHandler<JoinedGuildNotification>
 {
-    public Task Handle(JoinedGuildNotification notification, CancellationToken cancellationToken)
+    public Task HandleAsync(JoinedGuildNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
         {
