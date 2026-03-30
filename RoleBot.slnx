@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RoleBot.BusinessLayer/RoleBot.BusinessLayer.csproj" />
+  <Project Path="RoleBot.DataLayer/RoleBot.DataLayer.csproj" />
+  <Project Path="RoleBot.Models/RoleBot.Models.csproj" />
+  <Project Path="RoleBot/RoleBot.csproj" />
+</Solution>
