@@ -47,6 +47,12 @@ Create a role.
 
 ---
 
+`/copy-role-members`*
+
+Copy members of one role to another.
+
+---
+
 `/choose-color`
 
 Choose a color. If the setting is enabled, any user can set their own color (and it will create a role for them in doing so). 
