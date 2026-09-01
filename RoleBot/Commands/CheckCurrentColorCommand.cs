@@ -29,7 +29,7 @@ public class CheckColorCommand(IDiscordFormatter discordFormatter)
             .OrderByDescending(r => r.Position)
             .ToList();
 
-        var colorRole = userRoles.FirstOrDefault(r => r.Color != DiscordColor.Default && !r.IsEveryone);
+        var colorRole = userRoles.FirstOrDefault(r => r.Colors.PrimaryColor != DiscordColor.Default && !r.IsEveryone);
 
         if (colorRole == null)
         {
@@ -40,7 +40,7 @@ public class CheckColorCommand(IDiscordFormatter discordFormatter)
             return;
         }
 
-        var hex = colorRole.Color.ToString();
+        var hex = colorRole.Colors.PrimaryColor.ToString();
 
         await FollowupAsync(embed:
             discordFormatter.BuildRegularEmbedWithUserFooter("Name Color",
