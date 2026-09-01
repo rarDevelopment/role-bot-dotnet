@@ -96,7 +96,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
 
                 if (roleToAdd != null)
                 {
-                    if (roleToAdd.Color == roleColor)
+                    if (roleToAdd.Colors.PrimaryColor == roleColor)
                     {
                         await FollowupAsync(embed:
                             discordFormatter.BuildErrorEmbedWithUserFooter("Color NOT Set",
@@ -110,7 +110,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
                         x.Color = roleColor;
                         x.Name = roleName;
                     });
-                    existingColorWasModified = true;
+                    existingColorWasModified = roleToAdd.Colors.PrimaryColor == roleColor;
                 }
                 else
                 {
@@ -136,7 +136,7 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             var messageToSend = roleWasAdded
                 ? $"Added color role {roleToAdd.Mention} with color {FixColorForHexCode(roleColor.ToString())} for {userToAdd.Mention}"
                 : (existingColorWasModified ? $"Color for role {roleToAdd.Mention} was modified to {FixColorForHexCode(roleColor.ToString())}"
-                    : $"Color was **NOT** added - {userToAdd.Mention} already has the color role {roleToAdd.Mention} with color {FixColorForHexCode(roleColor.ToString())}");
+                    : $"Color was **NOT** added - {userToAdd.Mention} already has the color role {roleToAdd.Mention} with color {FixColorForHexCode(roleToAdd.Colors.PrimaryColor.ToString())}");
 
             var guildRoles = Context.Guild.Roles;
             var userRoles = guildRoles
@@ -145,7 +145,8 @@ public class ChooseColorCommand(IColorRoleBusinessLayer colorRoleBusinessLayer,
             var addedRole = guildRoles.FirstOrDefault(r => r.Id == roleToAdd.Id);
 
             var rolesWithColorsAboveNewRole = userRoles
-                .Where(r => r.Color != DiscordColor.Default && r.Position > (addedRole?.Position ?? 0) && !r.IsEveryone)
+                .Where(r => r.Colors.PrimaryColor != DiscordColor.Default
+                            && r.Position > (addedRole?.Position ?? 0) && !r.IsEveryone)
                 .ToList();
 
             if (rolesWithColorsAboveNewRole.Any())

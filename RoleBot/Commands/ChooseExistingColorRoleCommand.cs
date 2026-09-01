@@ -69,7 +69,7 @@ public class ChooseExistingColorRoleCommand(IColorRoleBusinessLayer colorRoleBus
                 .OrderByDescending(r => r.Position)
                 .ToList();
 
-            role ??= userRoles.FirstOrDefault(r => r.Color != DiscordColor.Default && !r.IsEveryone);
+            role ??= userRoles.FirstOrDefault(r => r.Colors.PrimaryColor != DiscordColor.Default && !r.IsEveryone);
 
             if (role == null)
             {
@@ -94,23 +94,23 @@ public class ChooseExistingColorRoleCommand(IColorRoleBusinessLayer colorRoleBus
 
             var messageToSend = $"Role {role.Mention} was set as the color role for {userToAdd.Mention}";
 
-            if (role.Color == DiscordColor.Default)
+            if (role.Colors.PrimaryColor == DiscordColor.Default)
             {
                 messageToSend += "\n**Note:** This role does not have a color.";
             }
             else
             {
-                var color = GetColorFromHexCode(role.Color.ToString());
+                var color = GetColorFromHexCode(role.Colors.PrimaryColor.ToString());
                 if (color != null)
                 {
-                    messageToSend += $"\nThe color for this role is {FixColorForHexCode(role.Color.ToString())}";
+                    messageToSend += $"\nThe color for this role is {FixColorForHexCode(role.Colors.PrimaryColor.ToString())}";
                 }
             }
 
             var addedRole = guildRoles.FirstOrDefault(r => r.Id == role.Id);
 
             var rolesWithColorsAboveNewRole = userRoles
-                .Where(r => r.Color != DiscordColor.Default && r.Position > (addedRole?.Position ?? 0) && r.Position != 0)
+                .Where(r => r.Colors.PrimaryColor != DiscordColor.Default && r.Position > (addedRole?.Position ?? 0) && r.Position != 0)
                 .ToList();
 
             if (rolesWithColorsAboveNewRole.Any())
